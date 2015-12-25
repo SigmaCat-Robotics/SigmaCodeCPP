@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import org.usfirst.frc.team108.util.SigmaVictorSP;
 import org.usfirst.frc.team108.util.SigmaEncoder;
+import org.usfirst.frc.team108.util.SigmaVictorSP;
 
 public class SigmaDrive {
 
