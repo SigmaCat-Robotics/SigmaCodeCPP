@@ -3,7 +3,8 @@ package org.usfirst.frc.team108.Drivetrain;
 import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
-import org.usfirst.frc.team108.util.*;
+import org.usfirst.frc.team108.util.SigmaVictorSP;
+import org.usfirst.frc.team108.util.SigmaEncoder;
 
 public class SigmaDrive {
 
