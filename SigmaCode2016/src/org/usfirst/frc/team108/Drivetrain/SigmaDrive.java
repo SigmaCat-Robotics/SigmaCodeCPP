@@ -3,19 +3,18 @@ package org.usfirst.frc.team108.Drivetrain;
 import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
-import edu.wpi.first.wpilibj.VictorSP;
-import org.usfirst.frc.team108.util.SigmaEncoder;
+import org.usfirst.frc.team108.util.*;
 
 public class SigmaDrive {
 
 	DriveConstants driveData = new DriveConstants();
 	
 	RobotDrive drive108;
-	VictorSP Left1 = new VictorSP(driveData.LeftMotor1);
-	VictorSP Left2 = new VictorSP(driveData.LeftMotor2);
+	SigmaVictorSP Left1 = new SigmaVictorSP(driveData.LeftMotor1);
+	SigmaVictorSP Left2 = new SigmaVictorSP(driveData.LeftMotor2);
 	
-	VictorSP Right1 = new VictorSP(driveData.RightMotor1);
-	VictorSP Right2 = new VictorSP(driveData.RightMotor2);
+	SigmaVictorSP Right1 = new SigmaVictorSP(driveData.RightMotor1);
+	SigmaVictorSP Right2 = new SigmaVictorSP(driveData.RightMotor2);
 	
 	DoubleSolenoid leftShifter = new DoubleSolenoid(driveData.LeftHighGear, driveData.LeftLowGear);
 	DoubleSolenoid rightShifter = new DoubleSolenoid(driveData.RightHighGear, driveData.RightLowGear);
