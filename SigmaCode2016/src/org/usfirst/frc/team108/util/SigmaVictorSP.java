@@ -53,9 +53,11 @@ public class SigmaVictorSP extends Victor {
 			
 
 			double sign = Math.abs(desiredOutput) / desiredOutput;
-//			if(this.desiredSpeed > 0 && this.prevOutput < 0 || this.desiredSpeed < 0 && this.prevOutput > 0){ // changed direction 
-//			this.output = 0; // jump to 0 to remove some lag
-//		}
+			/*
+			if(this.desiredSpeed > 0 && this.prevOutput < 0 || this.desiredSpeed < 0 && this.prevOutput > 0){ // changed direction 
+				this.output = 0; // jump to 0 to remove some lag
+			}
+			*/
 		/*
 		if(Math.abs(this.desiredSpeed) < SigmaVictorSP.ACCEL_VAL){
 			this.output = this.desiredSpeed;
