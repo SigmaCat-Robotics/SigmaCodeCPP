@@ -18,7 +18,7 @@ public class DriveConstants {
 	public final double DriveWidth = 20.25;
 	public final double DriveLength = 31.3;
 	
-	public final int CyclesPerPulse = 360;
+	public final double CyclesPerPulse = 0.00875;
 	
 	public final int LeftEncoderAChannel = 1;
 	public final int LeftEncoderBChannel = 2;
