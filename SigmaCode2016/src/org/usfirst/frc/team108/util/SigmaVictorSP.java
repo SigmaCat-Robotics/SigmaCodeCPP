@@ -1,4 +1,4 @@
-package org.usfirst.frc.team108.robot.util;
+package org.usfirst.frc.team108.util;
 
 import edu.wpi.first.wpilibj.Victor;
 import edu.wpi.first.wpilibj.smartdashboard.*;
@@ -14,7 +14,6 @@ public class SigmaVictorSP extends Victor {
 	
 	public double output;
 	
-	private SigmaEncoder enc;
 	
 	
 	public SigmaVictorSP(int channel, boolean acceleration) {
@@ -24,19 +23,10 @@ public class SigmaVictorSP extends Victor {
 		SmartDashboard.putNumber("Accel Jump Value: ", SigmaVictorSP.ACCEL_VAL);
 	}
 	
-	public SigmaVictorSP(int channel, boolean acceleration, SigmaEncoder enc) {
-		super(channel);
-		this.acceleration = acceleration;
-		this.enc = enc;
-		SmartDashboard.putNumber("acceleration Cap: ", SigmaVictorSP.ACCEL_CAP);
-		SmartDashboard.putNumber("Accel Jump Value: ", SigmaVictorSP.ACCEL_VAL);
-	}
-	
 	public SigmaVictorSP(int channel){
 		this(channel,false);
 	}
 		
-	
 	public void set(double desiredOutput) {
 		output = 0.0;
 		
@@ -53,24 +43,7 @@ public class SigmaVictorSP extends Victor {
 			
 
 			double sign = Math.abs(desiredOutput) / desiredOutput;
-			/*
-			if(this.desiredSpeed > 0 && this.prevOutput < 0 || this.desiredSpeed < 0 && this.prevOutput > 0){ // changed direction 
-				this.output = 0; // jump to 0 to remove some lag
-			}
-			*/
-		/*
-		if(Math.abs(this.desiredSpeed) < SigmaVictorSP.ACCEL_VAL){
-			this.output = this.desiredSpeed;
-		} else {				
-			// direction we are heading
-			sign = Math.abs(this.desiredSpeed) / this.desiredSpeed;
 			
-			if(Math.abs(this.prevOutput) >= this.ACCEL_VAL) {
-				this.output += Math.min(SigmaVictorSP.ACCEL_CAP, Math.abs(this.desiredSpeed - this.output))*this.sign;
-			} else {
-				this.output = this.ACCEL_VAL*this.sign;
-			}
-		}*/
 			// less than jump-to val, go right to desired output
 			if(Math.abs(desiredOutput) < SigmaVictorSP.ACCEL_VAL) {
 				output = desiredOutput;

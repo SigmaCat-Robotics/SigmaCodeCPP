@@ -11,19 +11,18 @@ public class SigmaDrive {
 	DriveConstants driveData = new DriveConstants();
 	
 	RobotDrive drive108;
-	SigmaVictorSP Left1 = new SigmaVictorSP(driveData.LeftMotor1);
-	SigmaVictorSP Left2 = new SigmaVictorSP(driveData.LeftMotor2);
-	
-	SigmaVictorSP Right1 = new SigmaVictorSP(driveData.RightMotor1);
-	SigmaVictorSP Right2 = new SigmaVictorSP(driveData.RightMotor2);
 	
 	DoubleSolenoid leftShifter = new DoubleSolenoid(driveData.LeftHighGear, driveData.LeftLowGear);
 	DoubleSolenoid rightShifter = new DoubleSolenoid(driveData.RightHighGear, driveData.RightLowGear);
 	
-	SigmaEncoder leftEncoder = new SigmaEncoder(driveData.LeftEncoderAChannel, driveData.LeftEncoderBChannel,
-												false, true);
-	SigmaEncoder rightEncoder = new SigmaEncoder(driveData.RightEncoderAChannel, driveData.RightEncoderBChannel,
-												true,true);
+	SigmaEncoder leftEncoder = new SigmaEncoder(driveData.LeftEncoderAChannel, driveData.LeftEncoderBChannel,false, true);
+	SigmaEncoder rightEncoder = new SigmaEncoder(driveData.RightEncoderAChannel, driveData.RightEncoderBChannel,true,true);
+	
+	SigmaVictorSP Left1 = new SigmaVictorSP(driveData.LeftMotor1,true);
+	SigmaVictorSP Left2 = new SigmaVictorSP(driveData.LeftMotor2,true);
+	
+	SigmaVictorSP Right1 = new SigmaVictorSP(driveData.RightMotor1,true);
+	SigmaVictorSP Right2 = new SigmaVictorSP(driveData.RightMotor2,true);
 	
 	boolean highFront;
 	boolean highGear;
