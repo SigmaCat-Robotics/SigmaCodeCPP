@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import org.usfirst.frc.team108.util.SigmaEncoder;
 import org.usfirst.frc.team108.util.SigmaVictorSP;
+import edu.wpi.first.wpilibj.Joystick;
 
 public class SigmaDrive {
 
@@ -25,7 +26,7 @@ public class SigmaDrive {
 	SigmaVictorSP Right2 = new SigmaVictorSP(driveData.RightMotor2,true);
 	
 	boolean highFront;
-	boolean highGear;
+	public boolean highGear;
 	double driveSpeed;
 	
 	public SigmaDrive(boolean HighFront) {
@@ -36,6 +37,14 @@ public class SigmaDrive {
 	public double getSpeed(){
 		driveSpeed = ((leftEncoder.getRate()+rightEncoder.getRate())/2)/12;
 		return this.driveSpeed;
+	}
+	
+	public void resetEncoders(){
+		leftEncoder.reset();
+	}
+	
+	public double getDistance(){
+		return (leftEncoder.getDistance()+rightEncoder.getDistance())/2;
 	}
 	
 	public void shiftToLow(){
@@ -56,6 +65,14 @@ public class SigmaDrive {
 		}else{
 			highGear = true;
 		}
+	}
+	
+	public void tankDrive(double leftValue, double rightValue){
+		drive108.tankDrive(leftValue, rightValue);
+	}
+	
+	public void tankDrive(Joystick stick1, Joystick stick2){
+		drive108.tankDrive(stick1, stick2);
 	}
 
 }
