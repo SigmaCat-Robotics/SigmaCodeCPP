@@ -31,7 +31,8 @@ public class SigmaDrive {
 	
 	public SigmaDrive(boolean HighFront) {
 		drive108 = new RobotDrive(Left1, Left2, Right1, Right2);
-		highFront = HighFront;		
+		highFront = HighFront;
+		drive108.setSafetyEnabled(true);
 	}
 	
 	public double getSpeed(){
@@ -73,6 +74,10 @@ public class SigmaDrive {
 	
 	public void tankDrive(Joystick stick1, Joystick stick2){
 		drive108.tankDrive(stick1, stick2);
+	}
+	
+	public void setExpiration(double value){
+		drive108.setExpiration(value);
 	}
 
 }

@@ -3,9 +3,10 @@ package org.usfirst.frc.team108.robot;
 
 
 import edu.wpi.first.wpilibj.SampleRobot;
-import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import org.usfirst.frc.team108.Drivetrain.SigmaDrive;
 
 /**
  * This is a demo program showing the use of the RobotDrive class.
@@ -24,32 +25,35 @@ import edu.wpi.first.wpilibj.Timer;
  * this system. Use IterativeRobot or Command-Based instead if you're new.
  */
 public class Robot extends SampleRobot {
-    RobotDrive myRobot;
-    Joystick stick;
+    SigmaDrive myRobot;
+    Joystick leftStick, rightStick;
 
     public Robot() {
-        myRobot = new RobotDrive(0, 1);
+        myRobot = new SigmaDrive(SmartDashboard.getBoolean("Is Front High: ", false));
         myRobot.setExpiration(0.1);
-        stick = new Joystick(0);
+        leftStick = new Joystick(0);
+        rightStick = new Joystick(1);
     }
 
     /**
      * Drive left & right motors for 2 seconds then stop
      */
     public void autonomous() {
-        myRobot.setSafetyEnabled(false);
-        myRobot.drive(-0.5, 0.0);	// drive forwards half speed
-        Timer.delay(2.0);		//    for 2 seconds
-        myRobot.drive(0.0, 0.0);	// stop robot
+
     }
 
     /**
-     * Runs the motors with arcade steering.
+     * Runs the motors with tank steering.
      */
     public void operatorControl() {
-        myRobot.setSafetyEnabled(true);
+
         while (isOperatorControl() && isEnabled()) {
-            myRobot.arcadeDrive(stick); // drive with arcade style (use right stick)
+            myRobot.tankDrive(leftStick, rightStick);
+            if(leftStick.getRawButton(0) && rightStick.getRawButton(0)){
+            	myRobot.shiftToLow();
+            }else{
+            	myRobot.shiftToHigh();
+            }
             Timer.delay(0.005);		// wait for a motor update time
         }
     }
