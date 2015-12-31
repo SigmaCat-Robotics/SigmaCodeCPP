@@ -45,7 +45,15 @@ public class SigmaDrive {
 	}
 	
 	public double getDistance(){
-		return (leftEncoder.getDistance()+rightEncoder.getDistance())/2;
+		return (this.getLeftDistance()+this.getRightDistance())/2;
+	}
+	
+	public double getLeftDistance(){
+		return leftEncoder.getDistance();
+	}
+	
+	public double getRightDistance(){
+		return rightEncoder.getDistance();
 	}
 	
 	public void shiftToLow(){
