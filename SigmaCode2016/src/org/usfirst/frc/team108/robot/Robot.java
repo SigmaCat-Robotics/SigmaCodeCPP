@@ -21,7 +21,7 @@ public class Robot extends SampleRobot {
         rightStick = new Joystick(1);
     }
 
-    
+    //testing
     public void autonomous() {
 
     }
