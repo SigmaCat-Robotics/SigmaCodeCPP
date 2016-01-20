@@ -7,10 +7,8 @@ class Robot: public SampleRobot
 
 
 public:
-	Robot() :
-			lstick(0),rstick(1)
-
-	{
+	Robot(){
+		lstick = new Joystick(0),rstick = new Joystick(1);
 		myRobot = new SigmaDrive();
 		myRobot->setExpiration(0.1);
 		std::thread drive(driveTask);
