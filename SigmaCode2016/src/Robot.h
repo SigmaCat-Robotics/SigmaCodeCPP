@@ -9,7 +9,7 @@ class Robot:public SampleRobot
     void RobotInit(void);
 
   private:
-    RobotDrive *driveSystem; 			// robot drive system
-    Joystick   *lstick,*rstick; 			// Left and Right Joysticks
-    VictorSP   *left1, *left2, *right1, *right2;
+    RobotDrive *driveSystem;
+    Joystick   *leftStick,*rightStick; 
+    VictorSP   *frontLeft, *frontRight, *rearLeft, *rearRight;
 }
