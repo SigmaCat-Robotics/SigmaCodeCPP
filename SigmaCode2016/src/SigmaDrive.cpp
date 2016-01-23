@@ -12,7 +12,7 @@ class SigmaDrive
 {
 	SigmaVictorSP *left1, *left2, *right1, *right2;
 	DoubleSolenoid *leftShifter, *rightShifter;
-	SigmaEncoder *leftEncoder, *rightEncoder;
+	//SigmaEncoder *leftEncoder, *rightEncoder;
 	RobotDrive *drive108;
 	double driveSpeed = 0.0;
 	bool highGear = false;
@@ -29,11 +29,11 @@ public:
 		leftShifter = new DoubleSolenoid(0,1);
 		rightShifter = new DoubleSolenoid(2,3);
 
-		leftEncoder = new SigmaEncoder(true,false,1,2);
-		rightEncoder = new SigmaEncoder(true,true,3,4);
+		//leftEncoder = new SigmaEncoder(true,false,1,2);
+		//rightEncoder = new SigmaEncoder(true,true,3,4);
 	};
 
-	double getSpeed(){
+	/*double getSpeed(){
 			SigmaDrive::driveSpeed = ((leftEncoder->GetRate()+rightEncoder->GetRate())/2);
 			return SigmaDrive::driveSpeed;
 	}
@@ -45,7 +45,7 @@ public:
 
 	double getDistance(){
 		return (SigmaDrive::getLeftDistance()+SigmaDrive::getRightDistance())/2;
-	}
+	}*/
 
 	void changeGears(){
 		highGear = (leftShifter->Get() && rightShifter->Get());
@@ -72,13 +72,13 @@ public:
 	}
 
 private:
-	double getLeftDistance(){
+	/*double getLeftDistance(){
 		return leftEncoder->GetDistance();
 	}
 
 	double getRightDistance(){
 		return rightEncoder->GetDistance();
-	}
+	}*/
 
 	void shiftToLow(){
 		leftShifter->Set(DoubleSolenoid::kForward);
@@ -86,7 +86,7 @@ private:
 	}
 
 	void shiftToHigh(){
-		leftShifter->Set(DoubleSolenoid::kReverse);
+		leftShifter->S et(DoubleSolenoid::kReverse);
 		rightShifter->Set(DoubleSolenoid::kReverse);
 	}
 
