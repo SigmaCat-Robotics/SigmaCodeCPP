@@ -1,6 +1,3 @@
-
-
-
 #include "WPILib.h"
 
 Robot::Robot(void)
@@ -12,7 +9,8 @@ Robot::Robot(void)
   
   driveSystem = new RobotDrive(frontLeft, frontRight, rearLeft, rearRight);
   
-  driveSystem->SetExpiration(0.1);
+  // What's this for?
+  //driveSystem->SetExpiration(0.1);
   
   leftStick =  new Joystick(1);
   rightStick = new Joystick(2);
