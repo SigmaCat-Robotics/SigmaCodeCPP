@@ -38,3 +38,17 @@ private:
 	}
 };
 START_ROBOT_CLASS(Robot)
+
+#include "WPILib.h"
+
+Robot::Robot(void)
+{
+	
+}
+
+Robot::~Robot(void)
+{
+}
+
+
+	
