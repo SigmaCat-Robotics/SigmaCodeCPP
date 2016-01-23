@@ -86,7 +86,7 @@ private:
 	}
 
 	void shiftToHigh(){
-		leftShifter->S et(DoubleSolenoid::kReverse);
+		leftShifter->Set(DoubleSolenoid::kReverse);
 		rightShifter->Set(DoubleSolenoid::kReverse);
 	}
 
