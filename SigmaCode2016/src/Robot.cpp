@@ -1,5 +1,6 @@
 #include "WPILib.h"
 #include "SigmaDrive.h"
+#include "ShooterIntake.h"
 
 
 class Robot: public SampleRobot
@@ -21,27 +22,35 @@ private:
 	}
 
 	void shootTask(){
-		while(IsAutonomous() && IsEnabled){
+		while(IsAutonomous() && IsEnabled()){
 			//Auto code here
 		}
 		while(IsOperatorControl() && IsEnabled()){
-			if(lstick->GetRawButton(1)){
-				mySword->Intake();
+			if(true){
+				if(lstick->GetRawButton(5)||rstick->GetRawButton(4)){
+					mySword->Intake();
+				}
+				else if(lstick->GetRawButton(4)||rstick->GetRawButton(5)){
+					mySword->Release();
+				}
 			}
-			if(rstick->GetRawButton(1)){
-				mySword->Release();
+
+			if(true){
+				if(lstick->GetRawButton(3)||rstick->GetRawButton(3)){
+					mySword->LiftIntake();
+				}
+				else if(lstick->GetRawButton(2)||rstick->GetRawButton(2)){
+					mySword->LowerIntake();
+				}
 			}
-			if(lstick->GetRawButton(2)){
-				mySword->LiftIntake();
-			}
-			if(rstick->GetRawButton(2)){
-				mySword->LowerIntake();
-			}
-			if(lstick->GetTrigger()){
-				mySword->Prime();
-			}
-			if(rstick->GetTrigger()){
-				mySword->Shoot();
+
+			if(true){
+				if(lstick->GetRawButton(1)){
+					mySword->Prime();
+				}
+				if(rstick->GetRawButton(1)){
+					mySword->Shoot();
+				}
 			}
 		}
 	}

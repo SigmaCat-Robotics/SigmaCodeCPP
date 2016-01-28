@@ -82,6 +82,7 @@ void SigmaDrive::changeGears(){
 
 void SigmaDrive::tankDrive(double leftValue, double rightValue){
 	drive108->TankDrive(leftValue, rightValue);
+	Wait(0.005);
 }
 
 	/*
