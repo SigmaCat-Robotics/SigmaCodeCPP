@@ -14,7 +14,8 @@
 	DoubleSolenoid *leftShifter, *rightShifter;
 	Encoder *leftEncoder, *rightEncoder;
 	RobotDrive *drive108;
-	double driveSpeed = 0.0;
+	BuiltInAccelerometer *accel;
+	double driveSpeed = 0.0, lastVel = 0.0, displacement = 0.0;
 	bool highGear = false;
 
 /*public:*/
@@ -31,6 +32,8 @@ SigmaDrive::SigmaDrive() {
 
 	leftEncoder = new Encoder(1,2);
 	rightEncoder = new Encoder(3,4);
+
+	accel = new BuiltInAccelerometer();
 }
 
 SigmaDrive::~SigmaDrive(){
@@ -94,4 +97,33 @@ void SigmaDrive::tankDrive(Joystick lStick, Joystick rStick){
 void SigmaDrive::setExpiration(double value){
 	drive108->SetExpiration(value);
 }
+
+void SigmaDrive::UpdateDiplacement(int updateRate){
+	if(std::abs(SigmaDrive::getSpeed()) < 0.2){
+		double accelGs = accel->GetX();
+		double sampleTime = 1/updateRate;
+		double accelIS2 = ((accelGs*9.80665)*3.28084)*12;
+		double currentVel = lastVel + (accelIS2 * sampleTime);
+		displacement = lastVel + (0.5 * accelIS2 * sampleTime * sampleTime);
+		lastVel = currentVel;
+	}
+	else{
+		lastVel = 0;
+	}
+}
+
+void SigmaDrive::ResetDisplacement(){
+	lastVel = 0;
+	displacement = 0;
+}
+
+double SigmaDrive::GetVelocity(){
+	return lastVel;
+}
+
+double SigmaDrive::GetDisplacement(){
+	return displacement;
+}
+
+
 

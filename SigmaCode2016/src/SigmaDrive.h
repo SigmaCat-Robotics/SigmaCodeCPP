@@ -20,9 +20,12 @@ public:
 	void setExpiration(double value);
 	double getLeftDistance();
 	double getRightDistance();
+	double GetVelocity();
+	double GetDisplacement();
 	void shiftToLow();
 	void shiftToHigh();
-
+	void UpdateDiplacement(int updateRate);
+	void ResetDisplacement();
 	virtual ~SigmaDrive();
 };
 
