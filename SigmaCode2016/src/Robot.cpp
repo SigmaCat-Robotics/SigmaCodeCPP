@@ -52,6 +52,7 @@ private:
 					mySword->Shoot();
 				}
 			}
+			Wait(0.005);
 		}
 	}
 
