@@ -47,6 +47,12 @@ void Robot::Autonomous(void)
 void Robot::OperatorControl(void)
 {
   printf("op control");
+  while(1)
+  {
+    Wait(1000);
+    printf("Heart beat");
+  }
+
 }
 
 	
