@@ -7,6 +7,8 @@ class Robot:public SampleRobot
     virtual ~Robot();
     void RobotMain(void);
     void RobotInit(void);
+    void Autonomous(void);
+    void OperatorControl();
 
   private:
     RobotDrive *driveSystem;
