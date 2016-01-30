@@ -39,5 +39,14 @@ void Robot::RobotMain(void)
   }
 }
 
+void Robot::Autonomous(void)
+{
+  printf("auto");
+}
+
+void Robot::OperatorControl(void)
+{
+  printf("op control");
+}
 
 	
