@@ -82,3 +82,7 @@ void ShooterIntake::LowerIntake(){
 double ShooterIntake::ShooterRate(){
 	return (shooterEncoder->GetRate()*1.21);
 }
+
+void ShooterIntake::ResetEncoder(){
+	shooterEncoder->Reset();
+}

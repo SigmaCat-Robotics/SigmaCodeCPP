@@ -11,7 +11,7 @@
 /*class SigmaDrive
 {*/
 	Talon *left1, *left2, *right1, *right2;
-	DoubleSolenoid *leftShifter, *rightShifter;
+	DoubleSolenoid *Shifter;
 	Encoder *leftEncoder, *rightEncoder;
 	RobotDrive *drive108;
 	BuiltInAccelerometer *accel;
@@ -20,18 +20,20 @@
 
 /*public:*/
 SigmaDrive::SigmaDrive() {
-	left1 = new Talon(1);
-	left2 = new Talon(2);
-	right1 = new Talon(3);
-	right2 = new Talon(4);
+	left1 = new Talon(0);
+	left2 = new Talon(1);
+	right1 = new Talon(2);
+	right2 = new Talon(3);
 
 	drive108 = new RobotDrive(left1,left2, right1, right2);
 
-	leftShifter = new DoubleSolenoid(0,1);
-	rightShifter = new DoubleSolenoid(2,3);
+	Shifter = new DoubleSolenoid(0,1);
 
 	leftEncoder = new Encoder(1,2);
+	leftEncoder->SetDistancePerPulse(0.00875);
 	rightEncoder = new Encoder(3,4);
+	rightEncoder->SetDistancePerPulse(0.00875);
+	rightEncoder->SetReverseDirection(true);
 
 	accel = new BuiltInAccelerometer();
 }
@@ -50,13 +52,11 @@ double SigmaDrive::getRightDistance(){
 }
 
 void SigmaDrive::shiftToLow(){
-	leftShifter->Set(DoubleSolenoid::kForward);
-	rightShifter->Set(DoubleSolenoid::kForward);
+	Shifter->Set(DoubleSolenoid::kForward);
 }
 
 void SigmaDrive::shiftToHigh(){
-	leftShifter->Set(DoubleSolenoid::kReverse);
-	rightShifter->Set(DoubleSolenoid::kReverse);
+	Shifter->Set(DoubleSolenoid::kReverse);
 }
 
 double SigmaDrive::getSpeed(){
@@ -74,7 +74,7 @@ double SigmaDrive::getDistance(){
 }
 
 void SigmaDrive::changeGears(){
-	highGear = (leftShifter->Get() && rightShifter->Get());
+	highGear = (Shifter->Get());
 	if(highGear){
 		shiftToLow();
 	}

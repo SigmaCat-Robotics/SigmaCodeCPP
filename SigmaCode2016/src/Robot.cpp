@@ -1,16 +1,9 @@
 #include "WPILib.h"
 #include "SigmaDrive.h"
 #include "ShooterIntake.h"
+#include "Robot.h"
 
-
-class Robot: public SampleRobot
-{
-	SigmaDrive *myRobot; // robot drive system
-	ShooterIntake *mySword;
-	Joystick *lstick,*rstick; // Left and Right Joysticks
-
-private:
-	void driveTask(){
+void Robot::driveTask(){
 		myRobot->resetEncoders();
 		while(IsAutonomous() && IsEnabled()){
 			//Auto code here
@@ -21,53 +14,54 @@ private:
 		}
 	}
 
-	void shootTask(){
-		while(IsAutonomous() && IsEnabled()){
-			//Auto code here
+void Robot::shootTask(){
+	while(IsAutonomous() && IsEnabled()){
+		//Auto code here
+	}
+	while(IsOperatorControl() && IsEnabled()){
+		if(true){
+			if(lstick->GetRawButton(5)||rstick->GetRawButton(4)){
+				mySword->Intake();
+			}
+			else if(lstick->GetRawButton(4)||rstick->GetRawButton(5)){
+				mySword->Release();
+			}
 		}
-		while(IsOperatorControl() && IsEnabled()){
-			if(true){
-				if(lstick->GetRawButton(5)||rstick->GetRawButton(4)){
-					mySword->Intake();
-				}
-				else if(lstick->GetRawButton(4)||rstick->GetRawButton(5)){
-					mySword->Release();
-				}
-			}
 
-			if(true){
-				if(lstick->GetRawButton(3)||rstick->GetRawButton(3)){
-					mySword->LiftIntake();
-				}
-				else if(lstick->GetRawButton(2)||rstick->GetRawButton(2)){
-					mySword->LowerIntake();
-				}
+		if(true){
+			if(lstick->GetRawButton(3)||rstick->GetRawButton(3)){
+				mySword->LiftIntake();
 			}
-
-			if(true){
-				if(lstick->GetRawButton(1)){
-					mySword->Prime();
-				}
-				if(rstick->GetRawButton(1)){
-					mySword->Shoot();
-				}
+			else if(lstick->GetRawButton(2)||rstick->GetRawButton(2)){
+				mySword->LowerIntake();
 			}
-			Wait(0.005);
 		}
+
+		if(true){
+			if(lstick->GetRawButton(1)){
+				mySword->Prime();
+			}
+			if(rstick->GetRawButton(1)){
+				mySword->Shoot();
+			}
+		}
+		Wait(0.005);
 	}
+}
 
-	static void driveWrapper(Robot* bot){
-		bot->driveTask();
-	}
+static void driveWrapper(Robot* bot){
+	bot->driveTask();
+}
 
-	static void shootWrapper(Robot* bot){
-		bot->shootTask();
-	}
+static void shootWrapper(Robot* bot){
+	bot->shootTask();
+}
 
 
-public:
-	Robot(){
-		lstick = new Joystick(0),rstick = new Joystick(1);
+Robot::Robot(){
+		lstick = new Joystick(0);
+		rstick = new Joystick(1);
+
 		myRobot = new SigmaDrive();
 		myRobot->setExpiration(0.1);
 		mySword = new ShooterIntake();
@@ -76,11 +70,34 @@ public:
 		std::thread shoot(shootWrapper, bot);
 		drive.join();
 		shoot.join();
-	}
+}
 
-	void OperatorControl()
-	{
-	}
+Robot::~Robot(){
+	delete myRobot;
+	delete mySword;
+	delete lstick;
+	delete rstick;
+}
 
-};
+void Robot::RobotInit(void){
+	myRobot->ResetDisplacement();
+	myRobot->resetEncoders();
+	mySword->ResetEncoder();
+}
+
+void Robot::Autonomous(void){
+
+}
+
+void Robot::OperatorControl(){
+
+}
+
+void Robot::Disabled(void){
+
+}
+
+void Robot::Test(void){
+
+}
 START_ROBOT_CLASS(Robot)

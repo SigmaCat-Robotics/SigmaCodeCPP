@@ -18,6 +18,7 @@ public:
 	void Shoot(/*double desiredSpeed*/);
 	void LiftIntake();
 	void LowerIntake();
+	void ResetEncoder();
 	virtual ~ShooterIntake();
 };
 
