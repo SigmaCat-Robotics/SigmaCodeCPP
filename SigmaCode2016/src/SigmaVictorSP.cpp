@@ -10,27 +10,21 @@
 #include <cmath>
 #include <algorithm>
 
-class SigmaVictorSP: public Victor
-{
-
-	public:
-		bool accel = false;
-		static double ACCEL_CAP = 0.01;
-		static double ACCEL_VAL = 0.2;
-		double prevOutput = 0.0;
-		double output = 0;
-		SigmaVictorSP(int channel, bool acceleration): Victor(channel){
+SigmaVictorSP::SigmaVictorSP(int channel, bool acceleration, PIDSource *source){
 			accel = acceleration;
 			SmartDashboard::PutNumber("acceleration Cap: ", ACCEL_CAP);
 			SmartDashboard::PutNumber("Accel Jump Value: ", ACCEL_VAL);
+			victor = new Victor(channel);
+			controller = new PIDController(p,i,d,this,source);
 		}
-		SigmaVictorSP(int channel){
-				this(channel,false);
+SigmaVictorSP::SigmaVictorSP(int channel){
+			accel = false;
+			victor = new Victor(channel);
 		}
-		void set(double desiredOutput) {
+void SigmaVictorSP::Set(double desiredOutput) {
 			output = 0.0;
 			if(!accel) {
-					Victor::Set(output);
+				controller->SetSetpoint(desiredOutput);
 			}
 			else {
 				//double ticksPerMs = enc.speed()/this.sensorIn.getLastTickLength();
@@ -54,11 +48,10 @@ class SigmaVictorSP: public Victor
 					output = std::min(absDesiredOutput, absPrevOutput) * sign;
 				}
 				prevOutput = output;
-				Victor::Set(output);
+				controller->SetSetpoint(output);
 			}
 
 		}
-		void enableAcceleration(bool acceleration){
-			accel = acceleration;
-		}
-};
+void enableAcceleration(bool acceleration){
+	accel = acceleration;
+}

@@ -11,12 +11,14 @@
 /*class SigmaDrive
 {*/
 	Talon *left1, *left2, *right1, *right2;
+	PIDController *leftControl1, *leftControl2, *rightControl1, *rightControl2;
 	DoubleSolenoid *Shifter;
 	Encoder *leftEncoder, *rightEncoder;
 	RobotDrive *drive108;
 	BuiltInAccelerometer *accel;
 	double driveSpeed = 0.0, lastVel = 0.0, displacement = 0.0;
 	bool highGear = false;
+	float p = 0.0, i = 0.0, d = 0.0, period = 0.05;
 
 /*public:*/
 SigmaDrive::SigmaDrive() {
@@ -31,11 +33,22 @@ SigmaDrive::SigmaDrive() {
 
 	leftEncoder = new Encoder(1,2);
 	leftEncoder->SetDistancePerPulse(0.00875);
+	leftEncoder->SetPIDSourceParameter(PIDSource::kRate);
 	rightEncoder = new Encoder(3,4);
 	rightEncoder->SetDistancePerPulse(0.00875);
 	rightEncoder->SetReverseDirection(true);
+	leftEncoder->SetPIDSourceParameter(PIDSource::kRate);
 
 	accel = new BuiltInAccelerometer();
+	leftControl1 = new PIDController(p, i, d, leftEncoder, left1, period);
+	leftControl2 = new PIDController(p, i, d, leftEncoder, left2, period);
+	rightControl1 = new PIDController(p, i, d, rightEncoder, right1, period);
+	rightControl2 = new PIDController(p, i, d, rightEncoder, right2, period);
+
+	leftControl1->SetOutputRange(-1.0,1.0);
+	leftControl2->SetOutputRange(-1.0,1.0);
+	rightControl1->SetOutputRange(-1.0,1.0);
+	rightControl2->SetOutputRange(-1.0,1.0);
 }
 
 SigmaDrive::~SigmaDrive(){
