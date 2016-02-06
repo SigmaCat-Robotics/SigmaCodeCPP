@@ -1,41 +1,58 @@
 #include "WPILib.h"
 
-class Robot: public SampleRobot
-{
-	RobotDrive *myRobot; // robot drive system
-	Joystick *lstick,*rstick; // Left and Right Joysticks
-	//VictorSP *left1, *left2, *right1, *right2;
-	DoubleSolenoid *shifter;
+RobotDrive *drive;
+Joystick *lstick, *rstick;
 
+/**
+ * Uses the CameraServer class to automatically capture video from a USB webcam
+ * and send it to the FRC dashboard without doing any vision processing. This
+ * is the easiest way to get camera images to the dashboard. Just add this to the
+ * RobotInit() method in your program.
+ */
+class Robot : public SampleRobot
+{
+	DoubleSolenoid *shifter;
 public:
 	void RobotInit() override {
-		/*
-		left1 = new VictorSP(0);
-		left2 = new VictorSP(1);
-		right1 = new VictorSP(2);
-		right2 = new VictorSP(3);
-		*/
-		myRobot = new RobotDrive(1,2,3,4);
+		CameraServer::GetInstance()->SetQuality(50);
+		//the camera name (ex "cam0") can be found through the roborio web interface
+		CameraServer::GetInstance()->StartAutomaticCapture("cam0");
+		drive = new RobotDrive(1,2,3,4);
 		lstick = new Joystick(0);
 		rstick = new Joystick(1);
-		//myRobot->SetExpiration(0.1);
-	//	std::thread drive(driveTask);
-	//	drive.detach();
 		shifter = new DoubleSolenoid(0,1);
+		//std::thread shift(Shift,shifter,this);
+		//shift.join();
 	}
 
 	void OperatorControl()
 	{
-		while(IsOperatorControl() && IsEnabled()){
-			if(lstick->GetRawButton(1) && rstick->GetRawButton(1)){
-				shifter->Set(kForward);
+		while (IsOperatorControl() && IsEnabled())
+		{
+			/** robot code here! **/
+			drive->TankDrive(lstick,rstick);
+			if(lstick->GetRawButton(1)){
+				shifter->Set(DoubleSolenoid::kForward);
 			}
 			else{
-				shifter->Set(kReverse);
+				shifter->Set(DoubleSolenoid::kReverse);
 			}
-			myRobot->TankDrive(lstick,rstick); // drive with tank style
-			Wait(0.005); // wait for a motor update time
+			Wait(0.005);				// wait for a motor update time
 		}
 	}
+/*
+	static void Shift(DoubleSolenoid *shift, Robot *bot){
+		while(bot->IsOperatorControl() && bot->IsEnabled()){
+			if(lstick->GetRawButton(1)){
+				shift->Set(DoubleSolenoid::kForward);
+			}
+			else{
+				shift->Set(DoubleSolenoid::kReverse);
+			}
+		}
+	}
+*/
 };
+
 START_ROBOT_CLASS(Robot)
+
