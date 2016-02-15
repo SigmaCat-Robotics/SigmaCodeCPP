@@ -5,42 +5,38 @@
  *      Author: Andrew
  */
 
-#include <ShooterIntake.h>
+#include "ShooterIntake.h"
 #include "WPILib.h"
 
-CANTalon *shooterWheel,*armMotor;
+CANTalon *shooterWheel, *armMotor;
 VictorSP *intakeMotor, *indexer1, *indexer2;
 DoubleSolenoid *shootAim;
-DigitalInput *indexSwitch;
-double maxShootSpeed = 5310, ShootOutput;
-double ShootSpeed, ArmSpeed;
+Encoder *shooterEncoder;
+DigitalInput *upperLimit, *lowerLimit, *indexSwitch;
+double maxShootSpeed = 5310, ShootOutput, ShootSpeed, ArmSpeed;
 
 ShooterIntake::ShooterIntake() {
 	shooterWheel = new CANTalon(5);
-	shootAim = new DoubleSolenoid(2,3);
-
-	intakeMotor = new VictorSP(1);
+	intakeMotor = new VictorSP(9);
 	armMotor = new CANTalon(6);
+	shooterEncoder = new Encoder(5,6);
+	shooterEncoder->SetDistancePerPulse(6.05);
+	upperLimit = new DigitalInput(7);
+	lowerLimit = new DigitalInput(8);
+	indexSwitch = new DigitalInput(9);
 
-	//indexer = new DoubleSolenoid(4,5);
 	indexer1 = new VictorSP(2);
 	indexer2 = new VictorSP(3);
-	indexSwitch = new DigitalInput(1);
 
-	shooterWheel->SetFeedbackDevice(CANTalon::EncRising);
-	shooterWheel->SetControlMode(CANSpeedController::kSpeed);
-	shooterWheel->ConfigEncoderCodesPerRev(20);
+	shooterWheel->SetControlMode(CANSpeedController::kVoltage);
 	shooterWheel->ConfigPeakOutputVoltage(+12, -12);
 	shooterWheel->ConfigNominalOutputVoltage(+0, -0);
 	shooterWheel->ConfigNeutralMode(CANSpeedController::NeutralMode::kNeutralMode_Coast);
 
-	armMotor->SetControlMode(CANSpeedController::kSpeed);
+	armMotor->SetControlMode(CANSpeedController::kVoltage);
 	armMotor->ConfigPeakOutputVoltage(+12, -12);
 	armMotor->ConfigNominalOutputVoltage(+0, -0);
 	armMotor->ConfigNeutralMode(CANSpeedController::NeutralMode::kNeutralMode_Brake);
-	armMotor->ConfigLimitMode(CANTalon::LimitMode::kLimitMode_SwitchInputsOnly);
-	armMotor->ConfigFwdLimitSwitchNormallyOpen(true);
-	armMotor->ConfigRevLimitSwitchNormallyOpen(true);
 }
 
 ShooterIntake::~ShooterIntake() {
@@ -50,6 +46,8 @@ ShooterIntake::~ShooterIntake() {
 void ShooterIntake::Intake(){
 	if(!indexSwitch->Get()){
 		intakeMotor->Set(0.8);
+		indexer1->Set(0.2);
+		indexer2->Set(-0.2);
 	}
 	else{
 		intakeMotor->Set(0);
@@ -57,42 +55,58 @@ void ShooterIntake::Intake(){
 }
 
 void ShooterIntake::Release(){
-
-	intakeMotor->Set(-0.3);
+	indexer1->Set(-0.2);
+	indexer2->Set(0.2);
+	intakeMotor->Set(-1.0);
 }
 
 void ShooterIntake::Prime(){
-	ShootSpeed = SmartDashboard::GetNumber("Shooter RPM: ", 4000);
 	if(indexSwitch->Get()){
-		shooterWheel->Set(ShootSpeed);
+		shooterWheel->Set(0.8*12);
 	}
 	else{
 		Wait(4.0);
-		shooterWheel->Set(0);
+		shooterWheel->Set(0.0);
 	}
 }
 
-void ShooterIntake::Shoot(){
-	if(ShooterIntake::ShooterRate()>= ShootSpeed){
-		indexer1->Set(0.5);
-		indexer2->Set(-0.5);
-		Wait(1.0);
+void ShooterIntake::Shoot(/*double desiredSpeed*/){
+	//motorOutput = desiredSpeed/maxSpeed;
+	if(ShooterIntake::ShooterRate()>4000){
+		indexer1->Set(0.4);
+		indexer2->Set(-0.4);
+		Wait(4.0);
 		indexer1->Set(0.0);
 		indexer2->Set(0.0);
 	}
 }
 
 void ShooterIntake::LiftIntake(){
-	ArmSpeed = SmartDashboard::GetNumber("Intake Arm Speed RPM: ", 60);
-	armMotor->Set(ArmSpeed);
+	armMotor->ConfigNeutralMode(CANTalon::NeutralMode::kNeutralMode_Coast);
+	if(!upperLimit->Get()){
+		armMotor->Set(0.1*12);
+	}
+	else{
+		armMotor->Set(0);
+	}
 }
 
 void ShooterIntake::LowerIntake(){
-	armMotor->Set(-ArmSpeed);
+	armMotor->ConfigNeutralMode(CANTalon::NeutralMode::kNeutralMode_Brake);
+	if(!lowerLimit->Get()){
+		armMotor->Set(-0.5*12);
+	}
+	else{
+		armMotor->Set(0);
+	}
 }
 
 double ShooterIntake::ShooterRate(){
-	return (shooterWheel->GetSpeed()*1.21);
+	return (shooterEncoder->GetRate()*1.21);
+}
+
+void ShooterIntake::ResetEncoder(){
+	shooterEncoder->Reset();
 }
 
 void ShooterIntake::ShooterAim(bool high){
