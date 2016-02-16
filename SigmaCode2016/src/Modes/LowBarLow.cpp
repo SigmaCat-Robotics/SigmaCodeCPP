@@ -28,9 +28,9 @@ void LowBarLow::Execute()
 	LokiStaff->StopIntake();
 	LokiStaff->StopIndexer();
 	LokiStaff->LowerIntake();
-	driver->driveStraight(100, 3.0, true);
-	driver->turnOnSpot(45,3);
-	driver->driveStraight(100, 4.0, true);
+	driver->driveStraight(240.0, 3.0, true);
+	driver->turnOnSpot(61,3);
+	driver->driveStraight(150.0, 4.0, true);
 	LokiStaff->Release();
 	Wait(3.0);
 	Finished = true;

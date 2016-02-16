@@ -16,12 +16,12 @@ SigmaDrive::SigmaDrive(){
 	right1 = new CANTalon(3);
 	right2 = new CANTalon(4);
 
-	left1->SetControlMode(CANSpeedController::kSpeed);
+	left1->SetControlMode(CANSpeedController::kVoltage);
 	left2->SetControlMode(CANSpeedController::kFollower);
 
 	left2->Set(1);
 
-	right1->SetControlMode(CANSpeedController::kSpeed);
+	right1->SetControlMode(CANSpeedController::kVoltage);
 	right2->SetControlMode(CANSpeedController::kFollower);
 
 	right2->Set(3);
@@ -87,7 +87,7 @@ void SigmaDrive::tankDrive(Joystick* lStick, Joystick* rStick){
 		left = lStick->GetY() * maxSpeedHigh;
 		right = rStick->GetY() * maxSpeedHigh;
 	}
-	drive108->TankDrive(left,right);
+	drive108->TankDrive(lStick->GetY()*12,rStick->GetY()*12);
 }
 
 void SigmaDrive::setExpiration(double value){
