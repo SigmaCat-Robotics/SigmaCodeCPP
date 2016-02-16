@@ -1,1 +1,8 @@
-Build using only Robot, ShooterIntake, and SigmaDrive files.
+Build using only Robot, ShooterIntake, AutonomousModes, AutoDrive, Modes Folder, and SigmaDrive files.
+CANTalon Setup
+1: Left Master
+2: Left Slave
+3: Right Master
+4: Right Slave
+5: Shooter Wheel
+6: Intake Arm

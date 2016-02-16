@@ -95,6 +95,15 @@ double ShooterIntake::ShooterRate(){
 	return (shooterWheel->GetSpeed()*1.21);
 }
 
+void ShooterIntake::StopIntake(){
+	intakeMotor->Set(0);
+}
+
+void ShooterIntake::StopIndexer(){
+	indexer1->Set(0);
+	indexer2->Set(0);
+}
+
 void ShooterIntake::ShooterAim(bool high){
 	if(!high){
 		shootAim->Set(shootAim->kForward);

@@ -1,41 +1,28 @@
 /*
  * AutoDrive.cpp
  *
- *  Created on: Jan 19, 2016
+ *  Created on: Feb 15, 2016
  *      Author: Andrew
  */
-
 #include <AutoDrive.h>
 
-class AutoDrive
-{
-	SigmaDrive *drive108;
-	double desiredSpeed = 0.0, leftSpeed = 0.0, rightSpeed = 0.0;
-	double setValue = 0.0, leftValue = 0.0, rightValue = 0.0;
-	double arcRadius = 0.0, leftRadius = 0.0, rightRadius = 0.0;
-	double distanceToTravel = 0.0,leftDTT = 0.0,rightDTT = 0.0;
-	double HighGearMaxSpeed = 0.0, LowGearMaxSpeed = 0.0, DriveWidth = 0.0;
-	bool finished = false;
+AutoDrive::AutoDrive(SigmaDrive* drive) {
+	drive108 = drive;
+}
 
-	AutoDrive(SigmaDrive drive) {
-		drive108 = drive;
-	}
+AutoDrive::~AutoDrive(){};
 
-	void driveStraight(double d, double t, bool stopWhenDone){
+void AutoDrive::driveStraight(double d, double t, bool stopWhenDone){
 		//currentSpeed = drive108.getSpeed();
 		desiredSpeed = d/t;
 		//double accelVal = (desiredSpeed - currentSpeed)/t;
 		//SmartDashboard.putNumber("acceleration Cap: ", accelVal);
-		if(drive108->highGear){
-			setValue = desiredSpeed/HighGearMaxSpeed;
-		}else{
-			setValue = desiredSpeed/LowGearMaxSpeed;
-		}
+		setValue = desiredSpeed/LowGearMaxSpeed;
 		while(!finished){
-			drive108->resetEncoders();
-			drive108->tankDrive(setValue, setValue);
-			//Timer.delay(t);
-			if(drive108->getDistance() <= d+6 && drive108->getDistance() >= d-6){
+			drive108->tankDrive(setValue*12, setValue*12);
+			Wait(0.005);
+			drive108->UpdateDiplacement(0.005);
+			if(drive108->GetDisplacement() <= d+6 && drive108->GetDisplacement() >= d-6){
 				finished = true;
 			}
 			/*
@@ -47,25 +34,22 @@ class AutoDrive
 			*/
 		}
 		if(stopWhenDone){
-			drive108->tankDrive(0, 0);
+			drive108->tankDrive(0.0, 0.0);
 		}
 	}
 
-	void turnOnSpot(double theta, double t){
+void AutoDrive::turnOnSpot(double theta, double t){
 		finished = false;
 		arcRadius = DriveWidth;
 		desiredSpeed = (arcRadius*theta)/t;
 		distanceToTravel = desiredSpeed*t;
-		if(drive108->highGear){
-			setValue = desiredSpeed/HighGearMaxSpeed;
-		}else{
-			setValue = desiredSpeed/LowGearMaxSpeed;
-		}
+		setValue = desiredSpeed/LowGearMaxSpeed;
 		while(!finished){
-			drive108->resetEncoders();
-			drive108->tankDrive(setValue, -setValue);
-			Wait(0.5);
-			if(drive108->getDistance() <= distanceToTravel+1 && drive108->getDistance() >= distanceToTravel-1){
+			drive108->tankDrive(setValue*12, -setValue*12);
+			Wait(0.05);
+			angle = drive108->gyro->GetAngle() + angle;
+			drive108->gyro->Reset();
+			if(angle <= theta+1 && angle >= theta-1){
 				finished = true;
 			}
 			/*
@@ -76,9 +60,10 @@ class AutoDrive
 			}
 			*/
 		}
+		drive108->tankDrive(0.0,0.0);
 	}
 
-	void followArc(double r, double theta, double t, bool leftTurn, bool stopWhenDone){
+void AutoDrive::followArc(double r, double theta, double t, bool leftTurn, bool stopWhenDone){
 		finished = false;
 		arcRadius = r;
 		if(leftTurn){
@@ -93,28 +78,20 @@ class AutoDrive
 		leftSpeed = leftDTT/t;
 		rightSpeed = rightDTT/t;
 		desiredSpeed = (leftSpeed+rightSpeed)/2;
-		if(drive108->highGear){
-			leftValue = leftSpeed/HighGearMaxSpeed;
-			rightValue = rightSpeed/HighGearMaxSpeed;
-		}else{
-			leftValue = leftSpeed/LowGearMaxSpeed;
-			rightValue = rightSpeed/LowGearMaxSpeed;
-		}
+		leftValue = leftSpeed/LowGearMaxSpeed;
+		rightValue = rightSpeed/LowGearMaxSpeed;
 		while(!finished){
-			drive108->resetEncoders();
 			drive108->tankDrive(leftValue, rightValue);
-			Wait(0.5);
-			if(drive108->getLeftDistance() <= leftDTT+1 && drive108->getLeftDistance() >= leftDTT-1){
-				if(drive108->getRightDistance() <= rightDTT+1 && drive108->getRightDistance() >= rightDTT-1){
+			Wait(0.005);
+			Ltravelled = (drive108->left1->GetEncVel()*wheelCircum)*0.005 + Ltravelled;
+			Rtravelled = (drive108->right1->GetEncVel()*wheelCircum)*0.005 + Rtravelled;
+			if(Ltravelled <= leftDTT+1 && Ltravelled >= leftDTT-1){
+				if(Rtravelled <= rightDTT+1 && Rtravelled >= rightDTT-1){
 					finished = true;
 				}
 			}
 		}
 		if(stopWhenDone){
-			drive108->tankDrive(0, 0);
+			drive108->tankDrive(0.0, 0.0);
 		}
-	}
-
-};
-
-
+}

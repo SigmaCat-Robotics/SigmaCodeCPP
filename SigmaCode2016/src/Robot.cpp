@@ -1,6 +1,7 @@
 #include "WPILib.h"
 #include "SigmaDrive.h"
 #include "ShooterIntake.h"
+#include "AutonomousModes.h"
 
 class Robot:public SampleRobot
 {
@@ -8,6 +9,8 @@ class Robot:public SampleRobot
 	SigmaDrive *myRobot;
 	ShooterIntake *mySword;
 	Task *Drive, *Shooter_Intake;
+	AutonomousModes *Modes;
+	Command *Auto;
 
 public:
 
@@ -20,11 +23,12 @@ public:
 		rstick = new Joystick(1);
 		controller = new Joystick(2);
 
-
 		myRobot = new SigmaDrive();
 		myRobot->setExpiration(0.1);
 
 		mySword = new ShooterIntake();
+
+		Modes = new AutonomousModes(myRobot,mySword);
 
 		Robot *bot = this;
 
@@ -38,6 +42,8 @@ public:
 
 	void Autonomous(){
 		myRobot->ResetDisplacement();
+		Auto = (Command *) Modes->GetAuto();
+		Auto->Start();
 		while(IsAutonomous() && IsEnabled()){
 			Wait(2);
 			printf("Auto");
@@ -85,6 +91,13 @@ private:
 				else if(controller->GetRawButton(6)){
 					mySword->Release();
 				}
+				else if(controller->GetRawButton(1)){
+					mySword->Shoot();
+				}
+				else{
+					mySword->StopIntake();
+					mySword->StopIndexer();
+				}
 			}
 
 			if(true){
@@ -99,9 +112,6 @@ private:
 			if(true){
 				if(controller->GetRawButton(3)){
 					mySword->Prime();
-				}
-				if(controller->GetRawButton(1)){
-					mySword->Shoot();
 				}
 			}
 		}

@@ -19,6 +19,8 @@ public:
 	void LiftIntake();
 	void LowerIntake();
 	void ResetEncoder();
+	void StopIntake();
+	void StopIndexer();
 	void ShooterAim(bool high);
 	virtual ~ShooterIntake();
 };
