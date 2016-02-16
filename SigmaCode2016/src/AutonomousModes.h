@@ -14,7 +14,6 @@
 class AutonomousModes {
 public:
 	AutonomousModes(SigmaDrive* drive108, ShooterIntake* intakeShooter);
-	void* GetAuto();
 	virtual ~AutonomousModes();
 	SendableChooser *AutoPicker;
 };

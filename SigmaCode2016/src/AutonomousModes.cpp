@@ -22,7 +22,4 @@ AutonomousModes::~AutonomousModes() {
 	// TODO Auto-generated destructor stub
 }
 
-void* AutonomousModes::GetAuto(){
-	return AutoPicker->GetSelected();
-}
 

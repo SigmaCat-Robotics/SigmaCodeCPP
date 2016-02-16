@@ -79,6 +79,7 @@ void SigmaDrive::tankDrive(double leftValue, double rightValue){
 }
 
 void SigmaDrive::tankDrive(Joystick* lStick, Joystick* rStick){
+	/*
 	double left ,right;
 	if(Shifter->Get() == DoubleSolenoid::kForward){
 		left = lStick->GetY() * maxSpeedLow;
@@ -87,6 +88,7 @@ void SigmaDrive::tankDrive(Joystick* lStick, Joystick* rStick){
 		left = lStick->GetY() * maxSpeedHigh;
 		right = rStick->GetY() * maxSpeedHigh;
 	}
+	*/
 	drive108->TankDrive(lStick->GetY()*12,rStick->GetY()*12);
 }
 

@@ -12,6 +12,7 @@ class Robot:public SampleRobot
 	AutonomousModes *Modes;
 	Command *Auto;
 
+
 public:
 
 	void RobotInit() override {
@@ -42,11 +43,11 @@ public:
 
 	void Autonomous(){
 		myRobot->ResetDisplacement();
-		Auto = (Command *) Modes->GetAuto();
+		Auto = (Command *) Modes->AutoPicker->GetSelected();
 		Auto->Start();
 		while(IsAutonomous() && IsEnabled()){
-			Wait(2);
-			printf("Auto");
+			Wait(0.05);
+			Scheduler::GetInstance()->Run();
 		}
 	}
 
