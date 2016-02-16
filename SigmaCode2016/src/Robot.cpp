@@ -86,6 +86,13 @@ private:
 				else if(controller->GetRawButton(6)){
 					mySword->Release();
 				}
+				else if(controller->GetRawButton(1)){
+					mySword->Shoot();
+				}
+				else{
+					mySword->StopIndexer();
+					mySword->StopIntake();
+				}
 			}
 
 			if(true){
@@ -100,9 +107,6 @@ private:
 			if(true){
 				if(controller->GetRawButton(3)){
 					mySword->Prime();
-				}
-				if(controller->GetRawButton(1)){
-					mySword->Shoot();
 				}
 			}
 			Wait(0.005);
