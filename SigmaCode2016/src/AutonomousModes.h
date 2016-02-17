@@ -13,9 +13,13 @@
 
 class AutonomousModes {
 public:
-	AutonomousModes(SigmaDrive* drive108, ShooterIntake* intakeShooter);
+	AutonomousModes(SigmaDrive* drive, ShooterIntake* intakeShooter);
+	void SetMode(int choice);
+	void Run();
 	virtual ~AutonomousModes();
-	SendableChooser *AutoPicker;
+	SigmaDrive *drive108;
+	ShooterIntake *intakeShooter108;
+	Command *Auto;
 };
 
 #endif /* SRC_AUTONOMOUSMODES_H_ */

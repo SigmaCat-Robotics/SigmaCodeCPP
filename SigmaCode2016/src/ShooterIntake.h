@@ -12,9 +12,9 @@ class ShooterIntake {
 public:
 	ShooterIntake();
 	double ShooterRate();
-	void Intake();
+	void Intake(bool Switch);
 	void Release();
-	void Prime();
+	void Prime(bool Switch);
 	void Shoot(/*double desiredSpeed*/);
 	void LiftIntake();
 	void LowerIntake();

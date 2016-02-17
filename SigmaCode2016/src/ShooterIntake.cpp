@@ -47,8 +47,8 @@ ShooterIntake::~ShooterIntake() {
 	// TODO Auto-generated destructor stub
 }
 
-void ShooterIntake::Intake(){
-	if(!indexSwitch->Get()){
+void ShooterIntake::Intake(bool Switch){
+	if(Switch){
 		intakeMotor->Set(0.8);
 	}
 	else{
@@ -57,13 +57,12 @@ void ShooterIntake::Intake(){
 }
 
 void ShooterIntake::Release(){
-
 	intakeMotor->Set(-0.3);
 }
 
-void ShooterIntake::Prime(){
+void ShooterIntake::Prime(bool Switch){
 	ShootSpeed = SmartDashboard::GetNumber("Shooter RPM: ", 4000);
-	if(indexSwitch->Get()){
+	if(Switch){
 		shooterWheel->Set(ShootSpeed);
 	}
 	else{
@@ -76,7 +75,7 @@ void ShooterIntake::Shoot(){
 	if(ShooterIntake::ShooterRate()>= ShootSpeed){
 		indexer1->Set(0.5);
 		indexer2->Set(-0.5);
-		Wait(1.0);
+		Wait(2.0);
 		indexer1->Set(0.0);
 		indexer2->Set(0.0);
 	}

@@ -2,20 +2,25 @@
 #include "SigmaDrive.h"
 #include "ShooterIntake.h"
 #include "AutonomousModes.h"
+#include "Option.h"
 
 class Robot:public SampleRobot
 {
 	Joystick   *lstick,*rstick,*controller;
-	SigmaDrive *myRobot;
-	ShooterIntake *mySword;
 	Task *Drive, *Shooter_Intake;
-	AutonomousModes *Modes;
-	Command *Auto;
+	SendableChooser *chooser;
 
 
 public:
+	SigmaDrive *myRobot;
+	ShooterIntake *mySword;
+	AutonomousModes *Modes;
 
 	void RobotInit() override {
+		chooser = new SendableChooser();
+		chooser->AddDefault("Low Bar Low Goal", new Option(1));
+		chooser->AddObject("Low Bar High Goal", new Option(2));
+		SmartDashboard::PutData("Auto", chooser);
 
 		CameraServer::GetInstance()->SetQuality(30);
 		CameraServer::GetInstance()->StartAutomaticCapture("cam0");
@@ -29,9 +34,8 @@ public:
 
 		mySword = new ShooterIntake();
 
-		Modes = new AutonomousModes(myRobot,mySword);
-
 		Robot *bot = this;
+		Modes = new AutonomousModes(myRobot, mySword);
 
 		Drive = new Task("Drive", driveWrapper, bot);
 		Shooter_Intake= new Task("ShooterIntake", shootWrapper, bot);
@@ -42,9 +46,10 @@ public:
 
 
 	void Autonomous(){
+		Option *num = (Option *) chooser->GetSelected();
 		myRobot->ResetDisplacement();
-		Auto = (Command *) Modes->AutoPicker->GetSelected();
-		Auto->Start();
+		Modes->SetMode(num->Get());
+		Modes->Run();
 		while(IsAutonomous() && IsEnabled()){
 			Wait(0.05);
 			Scheduler::GetInstance()->Run();
@@ -86,18 +91,23 @@ private:
 	void shootTask(){
 		while(true){
 			if(true){
-				if(controller->GetRawButton(5)){
-					mySword->Intake();
-				}
-				else if(controller->GetRawButton(6)){
-					mySword->Release();
+				if(!controller->GetRawButton(1)||controller->GetRawButton(3)){
+					if(controller->GetRawButton(5)||controller->GetRawButton(6)){
+						if(controller->GetRawButton(5)){
+							mySword->Intake(true);
+						}
+						else if(controller->GetRawButton(6)){
+							mySword->Release();
+						}
+					}
+					else{
+						mySword->Intake(false);
+						mySword->StopIntake();
+						mySword->StopIndexer();
+					}
 				}
 				else if(controller->GetRawButton(1)){
 					mySword->Shoot();
-				}
-				else{
-					mySword->StopIntake();
-					mySword->StopIndexer();
 				}
 			}
 
@@ -112,7 +122,9 @@ private:
 
 			if(true){
 				if(controller->GetRawButton(3)){
-					mySword->Prime();
+					mySword->Prime(true);
+				}else{
+					mySword->Prime(false);
 				}
 			}
 		}

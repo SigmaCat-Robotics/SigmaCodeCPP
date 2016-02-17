@@ -31,19 +31,20 @@ void LowBarHigh::Initialize()
 // Called repeatedly when this Command is scheduled to run
 void LowBarHigh::Execute()
 {
-	LokiStaff->Intake();
+	LokiStaff->Intake(true);
 	Wait(2.0);
-	LokiStaff->StopIntake();
+	LokiStaff->Intake(false);
 	LokiStaff->StopIndexer();
 	LokiStaff->LowerIntake();
 	driver->driveStraight(240.0, 3.0, true);
 	driver->turnOnSpot(-119,3);
 	driver->driveStraight(150.0, 4.0, true);
-	LokiStaff->Prime();
+	LokiStaff->Prime(true);
 	Wait(3.0);
 	LokiStaff->ShooterAim(true);
 	Wait(1.0);
 	LokiStaff->Shoot();
+	LokiStaff->Prime(false);
 	Finished = true;
 }
 

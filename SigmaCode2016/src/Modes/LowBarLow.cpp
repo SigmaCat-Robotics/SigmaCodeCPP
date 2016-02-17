@@ -23,9 +23,9 @@ void LowBarLow::Initialize()
 // Called repeatedly when this Command is scheduled to run
 void LowBarLow::Execute()
 {
-	LokiStaff->Intake();
+	LokiStaff->Intake(true);
 	Wait(2.0);
-	LokiStaff->StopIntake();
+	LokiStaff->Intake(false);
 	LokiStaff->StopIndexer();
 	LokiStaff->LowerIntake();
 	driver->driveStraight(240.0, 3.0, true);
