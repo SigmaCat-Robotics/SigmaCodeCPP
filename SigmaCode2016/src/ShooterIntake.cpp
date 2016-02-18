@@ -25,8 +25,8 @@ ShooterIntake::ShooterIntake() {
 	lowerLimit = new DigitalInput(8);
 	indexSwitch = new DigitalInput(9);
 
-	indexer1 = new VictorSP(2);
-	indexer2 = new VictorSP(3);
+	indexer1 = new VictorSP(7);
+	indexer2 = new VictorSP(8);
 
 	shooterWheel->SetControlMode(CANSpeedController::kVoltage);
 	shooterWheel->ConfigPeakOutputVoltage(+12, -12);
@@ -43,8 +43,8 @@ ShooterIntake::~ShooterIntake() {
 	// TODO Auto-generated destructor stub
 }
 
-void ShooterIntake::Intake(){
-	if(!indexSwitch->Get()){
+void ShooterIntake::Intake(bool Switch){
+	if(Switch){
 		intakeMotor->Set(0.8);
 		indexer1->Set(0.2);
 		indexer2->Set(-0.2);
@@ -60,8 +60,8 @@ void ShooterIntake::Release(){
 	intakeMotor->Set(-1.0);
 }
 
-void ShooterIntake::Prime(){
-	if(indexSwitch->Get()){
+void ShooterIntake::Prime(bool Switch){
+	if(Switch){
 		shooterWheel->Set(0.8*12);
 	}
 	else{

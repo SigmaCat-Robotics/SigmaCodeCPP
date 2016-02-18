@@ -45,7 +45,8 @@ SigmaDrive::SigmaDrive() {
 	rightEncoder->SetDistancePerPulse(0.00875);
 	rightEncoder->SetReverseDirection(true);
 
-	accel = new BuiltInAccelerometer();
+	accel = new ADXL362(ADXL362::kRange_4G);
+	gyro = new ADXRS450_Gyro();
 }
 
 SigmaDrive::~SigmaDrive(){

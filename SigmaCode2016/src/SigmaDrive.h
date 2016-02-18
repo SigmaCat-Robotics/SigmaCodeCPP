@@ -33,9 +33,12 @@ public:
 	DoubleSolenoid *Shifter;
 	Encoder *leftEncoder, *rightEncoder;
 	RobotDrive *drive108;
-	BuiltInAccelerometer *accel;
+	ADXL362 *accel;
+	ADXRS450_Gyro *gyro;
 	double driveSpeed = 0.0, lastVel = 0.0, displacement = 0.0;
 	bool highGear = false;
+	const double cimSpeed = 5310, HighRatio = 4.7, LowRatio = 18.6;
+	const double maxSpeedHigh = cimSpeed/HighRatio , maxSpeedLow = cimSpeed/LowRatio;//rpm
 };
 
 #endif /* SIGMADRIVE_H_ */
