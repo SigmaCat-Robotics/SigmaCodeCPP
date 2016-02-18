@@ -12,7 +12,7 @@
 
 class AutoDrive {
 public:
-	AutoDrive(SigmaDrive* drive108);
+	AutoDrive(SigmaDrive* drive);
 	void followArc(double r, double theta, double t, bool leftTurn, bool stopWhenDone);
 	void turnOnSpot(double theta, double t);
 	void driveStraight(double d, double t, bool stopWhenDone);

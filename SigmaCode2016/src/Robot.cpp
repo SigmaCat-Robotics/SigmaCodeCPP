@@ -127,8 +127,9 @@ private:
 					mySword->Prime(false);
 				}
 			}
+			Wait(0.005);
 		}
-		Wait(0.005);
+
 	}
 
 
