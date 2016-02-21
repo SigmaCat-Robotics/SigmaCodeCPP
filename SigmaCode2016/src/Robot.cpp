@@ -14,6 +14,7 @@ class QuickVisionRobot : public SampleRobot
 	RobotDrive *drive108;
 	DigitalInput *Upperlimit, *Lowerlimit;
 	DoubleSolenoid *shifter, *shooterAim;
+	Ultrasonic *ballDetect;
 
 public:
 	void RobotInit() override {
@@ -41,6 +42,10 @@ public:
 
 		shifter = new DoubleSolenoid(0,1);
 		shooterAim = new DoubleSolenoid(2,3);
+
+		ballDetect = new Ultrasonic(1, 2);
+		//ballDetect->SetEnabled(true);
+		ballDetect->SetAutomaticMode(true); // turns on automatic mode
 	}
 
 	void OperatorControl()
@@ -58,6 +63,7 @@ public:
 			drive108->TankDrive(left->GetY(),right->GetY());
 			SmartDashboard::PutNumber("DB/Slider 0", left->GetY());
 			SmartDashboard::PutNumber("DB/Slider 1", right->GetY());
+			SmartDashboard::PutNumber("Ball Detect", ballDetect->GetRangeInches());
 			Wait(0.005);				// wait for a motor update time
 
 			if(controller->GetRawAxis(2)>0.2){//down
@@ -76,14 +82,14 @@ public:
 			}else{
 				armMotor->Set(0.0);
 			}
-
-			if(left->GetRawButton(3) || right->GetRawButton(3)){
+/*
+			if(controller->GetRawButton(4)){
 				shooterAim->Set(DoubleSolenoid::kForward);
 			}
-			else{
+			else if(controller->GetRawButton(2)){
 				shooterAim->Set(DoubleSolenoid::kReverse);
 			}
-
+*/
 			if(controller->GetRawButton(5)){//intake
 				shooter->Set(0);
 				intake->Set(-0.7);
