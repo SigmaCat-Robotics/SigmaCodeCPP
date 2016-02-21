@@ -13,14 +13,15 @@ class QuickVisionRobot : public SampleRobot
 	VictorSP *intake, *leftIndexer, *rightIndexer,  *armMotor;
 	RobotDrive *drive108;
 	DigitalInput *Upperlimit, *Lowerlimit;
+	DoubleSolenoid *shifter, *shooterAim;
 
 public:
 	void RobotInit() override {
 		CameraServer::GetInstance()->SetQuality(50);
 		//the camera name (ex "cam0") can be found through the roborio web interface
 		CameraServer::GetInstance()->StartAutomaticCapture("cam0");
-		left = new Joystick(0);
-		right = new Joystick(1);
+		left = new Joystick(1);
+		right = new Joystick(0);
 		controller = new Joystick(2);
 
 		left1 = new VictorSP(9);
@@ -37,24 +38,28 @@ public:
 		Upperlimit = new DigitalInput(1);
 
 		drive108 = new RobotDrive(left1,left2,right1,right2);
+
+		shifter = new DoubleSolenoid(0,1);
+		shooterAim = new DoubleSolenoid(2,3);
 	}
 
 	void OperatorControl()
 	{
+		int counter = 0;
+		bool pulse = true;
 		while (IsOperatorControl() && IsEnabled())
 		{
 			/** robot code here! **/
+			/*if(left->GetRawButton(1) && right->GetRawButton(1)){
+				shifter->Set(DoubleSolenoid::kForward);
+			}else{
+				shifter->Set(DoubleSolenoid::kReverse);
+			}*/
 			drive108->TankDrive(left->GetY(),right->GetY());
 			SmartDashboard::PutNumber("DB/Slider 0", left->GetY());
 			SmartDashboard::PutNumber("DB/Slider 1", right->GetY());
-			armMotor->Set(1.0);
 			Wait(0.005);				// wait for a motor update time
-			if(controller->GetRawButton(1)){
-				shooter->Set(1.0);
-			}else{
-				shooter->Set(0);
-			}
-		/*
+
 			if(controller->GetRawAxis(2)>0.2){
 				if(!Upperlimit->Get()){
 					armMotor->Set(0.3);
@@ -71,24 +76,58 @@ public:
 			}else{
 				armMotor->Set(0.0);
 			}
-		*/
 
+			if(left->GetRawButton(3) || right->GetRawButton(3)){
+				shooterAim->Set(DoubleSolenoid::kForward);
+			}
+			else{
+				shooterAim->Set(DoubleSolenoid::kReverse);
+			}
 
-			if(controller->GetRawButton(5)){
+			if(controller->GetRawButton(5)){//intake
+				shooter->Set(0);
 				intake->Set(1.0);
+				if(pulse){
+					leftIndexer->Set(0.1);
+					rightIndexer->Set(-0.1);
+					if(counter%20 == 0){
+						pulse = false;
+					}
+				}else{
+					leftIndexer->Set(0.0);
+					rightIndexer->Set(0.0);
+					if(counter%20 == 0){
+						pulse = true;
+					}
+				}
 			}
-			else{
+			else if(controller->GetRawButton(6)){//release
+				shooter->Set(0);
+				intake->Set(-1.0);
+				leftIndexer->Set(-1.0);
+				rightIndexer->Set(1.0);
+			}
+			else if(controller->GetRawButton(3)){
 				intake->Set(0.0);
+				shooter->Set(0.9);
+				if(controller->GetRawButton(1)){
+					leftIndexer->Set(1.0);
+					rightIndexer->Set(-1.0);
+				}else{
+					leftIndexer->Set(0.0);
+					rightIndexer->Set(0.0);
+				}
 			}
-			if(controller->GetRawButton(6)){
-				leftIndexer->Set(1.0);
-				rightIndexer->Set(-1.0);
-			}
-			else{
+			else{//stop
+				shooter->Set(0);
+				intake->Set(0.0);
 				leftIndexer->Set(0.0);
 				rightIndexer->Set(0.0);
-			}		}
+			}
+			counter = counter+1;
+		}
 	}
+
 };
 
 START_ROBOT_CLASS(QuickVisionRobot)
