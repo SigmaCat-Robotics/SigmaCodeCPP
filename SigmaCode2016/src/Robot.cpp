@@ -60,16 +60,16 @@ public:
 			SmartDashboard::PutNumber("DB/Slider 1", right->GetY());
 			Wait(0.005);				// wait for a motor update time
 
-			if(controller->GetRawAxis(2)>0.2){
+			if(controller->GetRawAxis(2)>0.2){//down
 				if(!Upperlimit->Get()){
-					armMotor->Set(0.3);
+					armMotor->Set(0.50);
 				}else{
 					armMotor->Set(0.0);
 				}
 			}
-			else if(controller->GetRawAxis(3)>0.2){
+			else if(controller->GetRawAxis(3)>0.2){//up
 				if(!Lowerlimit->Get()){
-					armMotor->Set(-0.1);
+					armMotor->Set(-0.28);
 				}else{
 					armMotor->Set(0.0);
 				}
@@ -86,10 +86,10 @@ public:
 
 			if(controller->GetRawButton(5)){//intake
 				shooter->Set(0);
-				intake->Set(1.0);
+				intake->Set(-0.7);
 				if(pulse){
-					leftIndexer->Set(0.1);
-					rightIndexer->Set(-0.1);
+					leftIndexer->Set(-0.1);
+					rightIndexer->Set(0.1);
 					if(counter%20 == 0){
 						pulse = false;
 					}
@@ -103,16 +103,16 @@ public:
 			}
 			else if(controller->GetRawButton(6)){//release
 				shooter->Set(0);
-				intake->Set(-1.0);
-				leftIndexer->Set(-1.0);
-				rightIndexer->Set(1.0);
+				intake->Set(0.7);
+				leftIndexer->Set(1.0);
+				rightIndexer->Set(-1.0);
 			}
 			else if(controller->GetRawButton(3)){
 				intake->Set(0.0);
 				shooter->Set(0.9);
 				if(controller->GetRawButton(1)){
-					leftIndexer->Set(1.0);
-					rightIndexer->Set(-1.0);
+					leftIndexer->Set(-1.0);
+					rightIndexer->Set(1.0);
 				}else{
 					leftIndexer->Set(0.0);
 					rightIndexer->Set(0.0);
