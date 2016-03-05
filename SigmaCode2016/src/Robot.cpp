@@ -1,6 +1,6 @@
 #include "WPILib.h"
-//#include "stdio.h"
-
+#include "Option.h"
+//#include "LCameraServer.h"
 /**
  * Uses the CameraServer class to automatically capture video from a USB webcam
  * and send it to the FRC dashboard without doing any vision processing. This
@@ -19,13 +19,23 @@ class QuickVisionRobot : public SampleRobot
 	Task *Operating;
 	Encoder *leftEnc, *rightEnc, *shooterEnc;
 	ADXRS450_Gyro *gyro;
+	SendableChooser *chooser;
+	Option *num;
+	Image *frame;
+	IMAQdxSession session;
+	Relay *light;
 
 public:
 	void RobotInit() override {
-
+		light = new Relay(0);
 		gyro = new ADXRS450_Gyro();
 		gyro->Calibrate();
-
+		chooser = new SendableChooser();
+		chooser->AddDefault("Low Bar", new Option(1));
+		chooser->AddObject("Rock Wall", new Option(2));
+		chooser->AddObject("Moat", new Option(3));
+		chooser->AddObject("Rough Terrain", new Option(4));
+		SmartDashboard::PutData("Auto", chooser);
 		CameraServer::GetInstance()->SetQuality(50);
 		//the camera name (ex "cam0") can be found through the roborio web interface
 		CameraServer::GetInstance()->StartAutomaticCapture("cam0");
@@ -61,58 +71,88 @@ public:
 
 //		QuickVisionRobot *bot = this;
 //		Operating = new Task("Operating", (FUNCPTR)Wrapper, bot);
+/*
+		frame = imaqCreateImage(IMAQ_IMAGE_RGB, 0);
+		IMAQdxOpenCamera("cam0", IMAQdxCameraControlModeController, &session);
+		Wait(.5);
+		IMAQdxConfigureGrab(session);
+		Wait(.5);
+		IMAQdxStartAcquisition(session);
+		Wait(.5);
+*/
 	}
 
 	void Autonomous(){
 
+		num = (Option *) chooser->GetSelected();
 		int state = 1;
-
 		printf("start!\r\n");
+		SmartDashboard::PutNumber("Auto Picked", num->Get());
 
 		while(IsAutonomous() && IsEnabled())
 		{
+
 			switch(state)
 			{
 			case 1:
 				printf("state 1!\r\n");
-				rightEnc->Reset();
-				leftEnc->Reset();
-				shifter->Set(DoubleSolenoid::kForward);
-				drive108->TankDrive(0.7,0.7);
+				//This is moving the arm down at the start of the match
+				if(!Upperlimit->Get())
+				{
+				armMotor->Set(0.50);
+				}
+				else
+				{
+				armMotor->Set(0.0);
 				state = 2;
+			    }
+				//This is intaking the ball
+				intake->Set(0.7);//running at 70%
 				break;
 			case 2:
 				printf("state 2!\r\n");
+			    rightEnc->Reset();
+				leftEnc->Reset();
+				shifter->Set(DoubleSolenoid::kForward);
+				drive108->TankDrive(0.7,0.7);
+				state = 3;
+				break;
+			case 3:
+		 		printf("state 3!\r\n");
 				drive108->TankDrive(0.7,0.7);
 				if (rightEnc->Get() >= 7833)
 				{
-					state = 3;
+					state = 4;
 				}
-				break;
-			case 3:
-				printf("state 3!\r\n");
-				drive108->TankDrive(0.0,0.0);
-				state = 4;
 				break;
 			case 4:
 				printf("state 4!\r\n");
-				gyro->Reset();
-				drive108->TankDrive(0.7, -0.7);
+				drive108->TankDrive(0.0,0.0);
 				state = 5;
 				break;
 			case 5:
 				printf("state 5!\r\n");
+				gyro->Reset();
 				drive108->TankDrive(0.7, -0.7);
-				if (gyro->GetAngle() > 45)
-				{
-					state = 6;
-				}
+				state = 6;
 				break;
 			case 6:
+				printf("state 6!\r\n");
+				drive108->TankDrive(0.7, -0.7);
+				if (gyro->GetAngle() > 135)
+				{
+					state = 7;
+				}
 				break;
-			}
+			case 7:
+				printf("state 7!\r\n");
+				//After we get the angle we will shoot the ball
+
+
+				break;
 
 			Wait(.005);
+		    }
 		}
 	}
 
@@ -120,25 +160,27 @@ public:
 	{
 		int counter = 1;
 		int choice = 1;
-		bool pulse = true;
-		char buff[50];
-	//	Operating->join();
+
+	//	bool pulse = true;
+	//	char buff[50];
+	//	Operatineg->join();
 		while (IsOperatorControl() && IsEnabled())
 		{
 			/** robot code here! **/
+			light->Set(Relay::kForward);
 			if(right->GetRawButton(1)){
-				shifter->Set(DoubleSolenoid::kReverse); // High Gear = reverse
+				shifter->Set(DoubleSolenoid::kForward); // High Gear = reverse
 			}else if(left->GetRawButton(1)){
-				shifter->Set(DoubleSolenoid::kForward); // Low Gear = forward
+				shifter->Set(DoubleSolenoid::kReverse); // Low Gear = forward
 			}
 			drive108->TankDrive(left->GetY(),right->GetY());
-			SmartDashboard::PutNumber("DB/Slider 0", left->GetY());
-			SmartDashboard::PutNumber("DB/Slider 1", right->GetY());
+//			SmartDashboard::PutNumber("DB/Slider 0", left->GetY());
+//			SmartDashboard::PutNumber("DB/Slider 1", right->GetY());
 
 //			std::sprintf(buff, "%f %f %f\r\n", leftEnc->Get()/20.3, rightEnc->Get()/35.0, shooterEnc->Get());
-			std::sprintf(buff, "%d %d %d\r\n", leftEnc->Get(), rightEnc->Get(), shooterEnc->Get());
-
-			std::printf(buff);
+//			std::sprintf(buff, "%d %d %d\r\n", leftEnc->Get(), rightEnc->Get(), shooterEnc->Get());
+			SmartDashboard::PutBoolean("Ball In:", ballDetect->GetRangeInches()<3);
+//			std::printf(buff);
 			Wait(0.005);				// wait for a motor update time
 
 			if(controller->GetRawAxis(2)>0.2){//down
@@ -170,12 +212,12 @@ public:
 			if(controller->GetRawButton(6)){//intake
 				switch(choice){
 					case 1: intake->Set(-0.85);
-							leftIndexer->Set(-0.32108);
-							rightIndexer->Set(0.32108);
+							leftIndexer->Set(-0.50108);
+							rightIndexer->Set(0.50108);
 							if(ballDetect->GetRangeInches()<3){
 								choice = 2;
 								counter = 0;
-								pulse = true;
+								//pulse = true;
 							}
 							std::printf("CHOICE 1\r\n");
 							break;
